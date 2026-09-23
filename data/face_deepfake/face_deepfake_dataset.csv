@@ -1,0 +1,7 @@
+id,image_path,label
+1,data/face_deepfake/images/real/real_001.jpg,real
+2,data/face_deepfake/images/real/real_002.jpg,real
+3,data/face_deepfake/images/real/real_003.jpg,real
+4,data/face_deepfake/images/deepfake/fake_001.jpg,deepfake
+5,data/face_deepfake/images/deepfake/fake_002.jpg,deepfake
+6,data/face_deepfake/images/deepfake/fake_003.jpg,deepfake
