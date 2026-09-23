@@ -14,10 +14,23 @@ class ImageDetector:
 
     def __init__(self):
 
+        # AI-CyberShield root directory
+        ROOT_DIR = os.path.dirname(
+            os.path.dirname(os.path.abspath(__file__))
+        )
+
         self.model_path = os.path.join(
+            ROOT_DIR,
             "models",
             "face_deepfake"
         )
+
+        print("\n================================")
+        print("IMAGE DEEPFAKE DETECTOR")
+        print("================================")
+
+        print("Model path:")
+        print(self.model_path)
 
         self.model = None
         self.processor = None
@@ -35,49 +48,81 @@ class ImageDetector:
 
         self.load_model()
 
-    # --------------------------------------------------
-    # LOAD MODEL
-    # --------------------------------------------------
-
     def load_model(self):
 
         try:
 
-            if not os.path.exists(
-                self.model_path
-            ):
+            # Check folder
+            if not os.path.isdir(self.model_path):
+
+                print("❌ Model folder does not exist")
+                print(self.model_path)
+
                 return
 
-            self.processor = (
-                AutoImageProcessor.from_pretrained(
-                    self.model_path
-                )
+            print("\nModel folder found.")
+
+            files = os.listdir(self.model_path)
+
+            print("Model files:")
+            for file in files:
+                print("  ", file)
+
+            # Check required files
+            config_file = os.path.join(
+                self.model_path,
+                "config.json"
             )
+
+            model_file = os.path.join(
+                self.model_path,
+                "model.safetensors"
+            )
+
+            if not os.path.exists(config_file):
+
+                print("❌ config.json missing")
+
+                return
+
+            if not os.path.exists(model_file):
+
+                print("❌ model.safetensors missing")
+
+                return
+
+            print("\nLoading processor...")
+
+            self.processor = (
+                AutoImageProcessor
+                .from_pretrained(self.model_path)
+            )
+
+            print("Processor loaded.")
+
+            print("Loading deepfake model...")
 
             self.model = (
                 AutoModelForImageClassification
-                .from_pretrained(
-                    self.model_path
-                )
+                .from_pretrained(self.model_path)
             )
 
             self.model.to(self.device)
+
             self.model.eval()
 
             self.model_loaded = True
 
+            print("\n✅ Deepfake model loaded successfully")
+            print("Device:", self.device)
+
         except Exception as e:
 
-            print(
-                "Image deepfake model error:",
-                e
-            )
+            print("\n❌ MODEL LOADING ERROR")
+            print(type(e).__name__)
+            print(str(e))
 
             self.model_loaded = False
-
-    # --------------------------------------------------
-    # READ IMAGE
-    # --------------------------------------------------
 
     def read_image(self, uploaded_file):
 
@@ -97,15 +142,9 @@ class ImageDetector:
 
         return image
 
-    # --------------------------------------------------
-    # PREDICT
-    # --------------------------------------------------
-
     def predict(self, uploaded_file):
 
-        image = self.read_image(
-            uploaded_file
-        )
+        image = self.read_image(uploaded_file)
 
         if image is None:
 
@@ -117,7 +156,6 @@ class ImageDetector:
                 "faces_detected": 0
             }
 
-        # Detect face
         gray = cv2.cvtColor(
             image,
             cv2.COLOR_BGR2GRAY
@@ -144,7 +182,7 @@ class ImageDetector:
                 "faces_detected": 0
             }
 
-        # Use largest face
+        # Largest face
         x, y, w, h = max(
             faces,
             key=lambda box: box[2] * box[3]
@@ -155,7 +193,6 @@ class ImageDetector:
             x:x+w
         ]
 
-        # Model unavailable
         if not self.model_loaded:
 
             return {
@@ -166,17 +203,14 @@ class ImageDetector:
                 "faces_detected": len(faces)
             }
 
-        # BGR → RGB
+        # OpenCV BGR → RGB
         face_rgb = cv2.cvtColor(
             face,
             cv2.COLOR_BGR2RGB
         )
 
-        pil_image = Image.fromarray(
-            face_rgb
-        )
+        pil_image = Image.fromarray(face_rgb)
 
-        # Prepare input
         inputs = self.processor(
             images=pil_image,
             return_tensors="pt"
@@ -187,7 +221,6 @@ class ImageDetector:
             for key, value in inputs.items()
         }
 
-        # Prediction
         with torch.no_grad():
 
             outputs = self.model(
@@ -200,29 +233,19 @@ class ImageDetector:
         )[0]
 
         prediction_id = int(
-            torch.argmax(
-                probabilities
-            )
+            torch.argmax(probabilities)
         )
 
         confidence = float(
-            probabilities[
-                prediction_id
-            ]
+            probabilities[prediction_id]
         )
 
         label = self.model.config.id2label.get(
             prediction_id,
             str(prediction_id)
-        )
+        ).upper()
 
-        label = label.upper()
-
-        # Normalize result
-        if (
-            "DEEPFAKE" in label
-            or "FAKE" in label
-        ):
+        if "DEEPFAKE" in label or "FAKE" in label:
 
             prediction = "DEEPFAKE"
             risk = "HIGH"
@@ -238,19 +261,13 @@ class ImageDetector:
             risk = "UNKNOWN"
 
         return {
-
             "prediction": prediction,
-
             "confidence": round(
                 confidence * 100,
                 2
             ),
-
             "risk": risk,
-
             "model_status": "READY",
-
             "faces_detected": len(faces),
-
             "model_label": label
         }
