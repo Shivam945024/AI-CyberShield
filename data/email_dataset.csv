@@ -1,0 +1,21 @@
+sender,subject,body,label
+support@github.com,Your GitHub notification,You have a new notification on GitHub.,benign
+no-reply@microsoft.com,Microsoft account notification,This is your Microsoft account notification.,benign
+notifications@linkedin.com,New LinkedIn notification,You have received a new LinkedIn notification.,benign
+noreply@google.com,Security notification,Your Google account security notification is available.,benign
+support@amazon.com,Your order update,Your Amazon order has been updated.,benign
+hello@example.com,Meeting reminder,This is a reminder for your scheduled meeting.,benign
+hr@company.com,Interview schedule,Your interview has been scheduled for tomorrow.,benign
+admin@college.edu,Exam notification,Your examination schedule has been published.,benign
+library@college.edu,Book return reminder,Please return your library book before the due date.,benign
+team@project.com,Project meeting,The project meeting is scheduled for Monday.,benign
+unknown123@example.com,Urgent account verification,Click here immediately to verify your account or it will be closed.,phishing
+security-alert@example.com,Your account will be suspended,Verify your password immediately to avoid account suspension.,phishing
+winner@example.com,Congratulations you won,You have won a free prize. Send your information to claim it.,phishing
+payment-check@example.com,Payment failed,Update your payment information immediately using the attached link.,phishing
+account-update@example.com,Verify your identity,Enter your password and verification code to continue.,phishing
+refund@example.com,You are eligible for refund,Click the link and provide your banking information to receive your refund.,phishing
+support-alert@example.com,Security warning,Your account has suspicious activity. Login immediately using this link.,phishing
+free-gift@example.com,Free gift waiting,Claim your free gift by entering your personal information.,phishing
+password-reset@example.com,Password reset required,Confirm your password using the link below immediately.,phishing
+bank-alert@example.com,Important bank notification,Verify your account details and OTP immediately.,phishing
