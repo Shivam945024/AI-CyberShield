@@ -47,10 +47,7 @@ module = st.sidebar.selectbox(
         "🌐 URL Detection",
         "📧 Email Detection",
         "🌐 Network Detection",
-        "🧑 Face Detection",
-        "🖼️ Image Deepfake Detection",
-        "🎥 Video Deepfake Detection",
-        "🎵 Audio Deepfake Detection"
+       
     ]
 )
 
