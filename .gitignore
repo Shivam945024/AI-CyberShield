@@ -40,3 +40,4 @@ uploads/
 
 # Logs
 *.log
+models/*.pkl
