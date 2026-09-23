@@ -93,10 +93,7 @@ if module == "🏠 Dashboard":
         - 🌐 Malicious URL Detection
         - 📧 Phishing Email Detection
         - 🌐 Network Threat Detection
-        - 🧑 Face Deepfake Detection
-        - 🖼️ Image Deepfake Detection
-        - 🎥 Video Deepfake Detection
-        - 🎵 Audio Deepfake Detection
+        
 
         ### Security Pipeline
 
